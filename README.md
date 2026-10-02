@@ -32,7 +32,8 @@ await bridge.updateLink('launch', { longUrl: 'https://yourapp.com/launch-v2' });
 await bridge.deleteLink('launch');
 
 // Send a conversion / revenue event (ties revenue to the funnel)
-await bridge.sendEvent({ appId: 'YOUR_APP_ID', event: 'purchase', value: 49.99, currency: 'USD' });
+// Authenticated with your secret key — no publishable key needed server-side.
+await bridge.sendEvent({ event: 'purchase', value: 49.99, currency: 'USD' });
 ```
 
 Failures throw a `BridgeError` with `.status` and the parsed `.body`.

@@ -55,12 +55,14 @@ describe('BridgeClient', () => {
     expect(calls[0]!.init.method).toBe('DELETE');
   });
 
-  it('sendEvent POSTs without auth header (public endpoint)', async () => {
+  it('sendEvent POSTs with the secret key (server-side, no publishable key)', async () => {
     const { client, calls } = clientWith(() => json({ ok: true }, 202));
-    await client.sendEvent({ appId: 'ten_1', event: 'purchase', value: 9.99 });
+    await client.sendEvent({ event: 'purchase', value: 9.99 });
     expect(calls[0]!.url).toBe('https://go.example.com/v1/event');
-    expect((calls[0]!.init.headers as Record<string, string>).Authorization).toBeUndefined();
-    expect(JSON.parse(calls[0]!.init.body as string)).toMatchObject({ appId: 'ten_1', event: 'purchase' });
+    expect((calls[0]!.init.headers as Record<string, string>).Authorization).toMatch(/^Bearer /);
+    const body = JSON.parse(calls[0]!.init.body as string);
+    expect(body).toMatchObject({ event: 'purchase', value: 9.99 });
+    expect(body).not.toHaveProperty('appId');
   });
 
   it('throws BridgeError with status + parsed body on failure', async () => {

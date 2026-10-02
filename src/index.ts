@@ -34,8 +34,6 @@ export interface CreateLinkInput {
 }
 
 export interface SendEventInput {
-  /** Your app id (tenant id). Required by the public /v1/event endpoint. */
-  appId: string;
   event: string;
   value?: number;
   currency?: string;
@@ -117,6 +115,7 @@ export class BridgeClient {
 
   /** Send a conversion/revenue event (the /v1/event endpoint is unauthenticated). */
   async sendEvent(input: SendEventInput): Promise<void> {
-    await this.request<unknown>('POST', '/v1/event', input, false);
+    // Server-side: authenticated with the secret key, so no publishable key needed.
+    await this.request<unknown>('POST', '/v1/event', input, true);
   }
 }
