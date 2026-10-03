@@ -5,9 +5,11 @@ from your backend. Zero dependencies; uses your tenant API key.
 
 ## Install
 
+<!-- brand:install -->
 ```sh
 npm install @bridge/sdk-node
 ```
+<!-- /brand:install -->
 
 ## Use
 
