@@ -36,6 +36,9 @@ await strait.deleteLink('launch');
 // Send a conversion / revenue event (ties revenue to the funnel)
 // Authenticated with your secret key — no publishable key needed server-side.
 await strait.sendEvent({ event: 'purchase', value: 49.99, currency: 'USD' });
+// Optional: the tap it came from (B15), e.g. forwarded by your app, so the
+// dashboard places the revenue on that tap's channel / A/B variant.
+await strait.sendEvent({ event: 'purchase', value: 49.99, currency: 'USD', clickId });
 ```
 
 Failures throw a `StraitError` with `.status` and the parsed `.body`.

@@ -39,6 +39,12 @@ export interface SendEventInput {
   currency?: string;
   linkId?: string;
   platform?: string;
+  /**
+   * The tap this conversion came from (contract B15): the tap id your app
+   * forwarded (the mobile SDKs attach it to their own events automatically).
+   * Kept only when it is a tap of your workspace; otherwise ignored.
+   */
+  clickId?: string;
 }
 
 export class StraitError extends Error {

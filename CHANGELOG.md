@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+- `sendEvent({ clickId })`: pass the tap a conversion came from (contract B15); the
+  engine keeps it only when it is a tap of your workspace, so revenue lands on that
+  tap's channel and A/B variant.
+
 ## 0.5.0
 
 - **Renamed to Strait** (breaking, clean break). The package is now

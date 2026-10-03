@@ -1,6 +1,6 @@
 {
   "name": "@strait/sdk-node",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Server SDK for Node: create and manage short links and send conversion events from your backend. Zero dependencies.",
   "keywords": [
     "deep-linking",
