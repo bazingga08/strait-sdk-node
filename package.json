@@ -1,6 +1,6 @@
 {
-  "name": "@bridge/sdk-node",
-  "version": "0.1.0",
+  "name": "@strait/sdk-node",
+  "version": "0.5.0",
   "description": "Server SDK for Node: create and manage short links and send conversion events from your backend. Zero dependencies.",
   "keywords": [
     "deep-linking",
@@ -11,14 +11,14 @@
     "node"
   ],
   "license": "MIT",
-  "author": "[Company legal name]",
-  "homepage": "https://yourbrand.com",
+  "author": "Strait Technologies",
+  "homepage": "https://usestrait.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bazingga08/bridge-sdk-node.git"
+    "url": "git+https://github.com/bazingga08/strait-sdk-node.git"
   },
   "bugs": {
-    "url": "https://github.com/bazingga08/bridge-sdk-node/issues"
+    "url": "https://github.com/bazingga08/strait-sdk-node/issues"
   },
   "type": "module",
   "main": "dist/index.js",

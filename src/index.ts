@@ -1,12 +1,12 @@
 /**
- * @bridge/sdk-node — manage Bridge links and send conversion events from your
+ * @strait/sdk-node — manage Strait links and send conversion events from your
  * backend. Authenticates with a tenant API key (Bearer). Zero dependencies.
  */
 
-export interface BridgeClientOptions {
-  /** Your Bridge API key (bk_live_… / bk_test_…). */
+export interface StraitClientOptions {
+  /** Your Strait API key (st_live_… / st_test_…). */
   apiKey: string;
-  /** Bridge API base, e.g. https://go.yourbrand.com. */
+  /** Strait API base, e.g. https://go.yourbrand.com. */
   baseUrl: string;
   /** Override fetch (tests / custom agents). Defaults to global fetch. */
   fetch?: typeof fetch;
@@ -41,25 +41,25 @@ export interface SendEventInput {
   platform?: string;
 }
 
-export class BridgeError extends Error {
+export class StraitError extends Error {
   constructor(
     message: string,
     readonly status: number,
     readonly body: unknown,
   ) {
     super(message);
-    this.name = 'BridgeError';
+    this.name = 'StraitError';
   }
 }
 
-export class BridgeClient {
+export class StraitClient {
   private readonly apiKey: string;
   private readonly baseUrl: string;
   private readonly doFetch: typeof fetch;
 
-  constructor(opts: BridgeClientOptions) {
-    if (!opts.apiKey) throw new Error('BridgeClient: apiKey is required');
-    if (!opts.baseUrl) throw new Error('BridgeClient: baseUrl is required');
+  constructor(opts: StraitClientOptions) {
+    if (!opts.apiKey) throw new Error('StraitClient: apiKey is required');
+    if (!opts.baseUrl) throw new Error('StraitClient: baseUrl is required');
     this.apiKey = opts.apiKey;
     this.baseUrl = opts.baseUrl.replace(/\/+$/, '');
     this.doFetch = opts.fetch ?? globalThis.fetch;
@@ -85,7 +85,7 @@ export class BridgeClient {
         (parsed && typeof parsed === 'object' && 'error' in parsed
           ? String((parsed as { error: unknown }).error)
           : `HTTP ${res.status}`);
-      throw new BridgeError(msg, res.status, parsed);
+      throw new StraitError(msg, res.status, parsed);
     }
     return parsed as T;
   }

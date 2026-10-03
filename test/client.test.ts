@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { BridgeClient, BridgeError } from '../src/index.js';
+import { StraitClient, StraitError } from '../src/index.js';
 
 function clientWith(handler: (url: string, init: RequestInit) => Response) {
   const calls: Array<{ url: string; init: RequestInit }> = [];
@@ -7,8 +7,8 @@ function clientWith(handler: (url: string, init: RequestInit) => Response) {
     calls.push({ url, init });
     return handler(url, init);
   }) as unknown as typeof fetch;
-  const client = new BridgeClient({
-    apiKey: 'bk_live_test',
+  const client = new StraitClient({
+    apiKey: 'st_live_test',
     baseUrl: 'https://go.example.com/',
     fetch: fetchMock,
   });
@@ -18,10 +18,10 @@ function clientWith(handler: (url: string, init: RequestInit) => Response) {
 const json = (body: unknown, status = 200) =>
   ({ ok: status >= 200 && status < 300, status, text: async () => JSON.stringify(body) }) as Response;
 
-describe('BridgeClient', () => {
+describe('StraitClient', () => {
   it('requires apiKey + baseUrl', () => {
-    expect(() => new BridgeClient({ apiKey: '', baseUrl: 'x' })).toThrow();
-    expect(() => new BridgeClient({ apiKey: 'k', baseUrl: '' })).toThrow();
+    expect(() => new StraitClient({ apiKey: '', baseUrl: 'x' })).toThrow();
+    expect(() => new StraitClient({ apiKey: 'k', baseUrl: '' })).toThrow();
   });
 
   it('createLink POSTs with Bearer auth and trims the base slash', async () => {
@@ -31,7 +31,7 @@ describe('BridgeClient', () => {
     const link = await client.createLink({ slug: 'promo', longUrl: 'https://x.com' });
     expect(link.id).toBe('lnk_1');
     expect(calls[0]!.url).toBe('https://go.example.com/v1/links');
-    expect((calls[0]!.init.headers as Record<string, string>).Authorization).toBe('Bearer bk_live_test');
+    expect((calls[0]!.init.headers as Record<string, string>).Authorization).toBe('Bearer st_live_test');
     expect(calls[0]!.init.method).toBe('POST');
   });
 
@@ -65,10 +65,10 @@ describe('BridgeClient', () => {
     expect(body).not.toHaveProperty('appId');
   });
 
-  it('throws BridgeError with status + parsed body on failure', async () => {
+  it('throws StraitError with status + parsed body on failure', async () => {
     const { client } = clientWith(() => json({ error: 'slug already exists' }, 409));
     await expect(client.createLink({ slug: 'dup', longUrl: 'https://x.com' })).rejects.toMatchObject({
-      name: 'BridgeError',
+      name: 'StraitError',
       status: 409,
       message: 'slug already exists',
     });

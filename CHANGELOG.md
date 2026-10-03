@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0
+
+- **Renamed to Strait** (breaking, clean break). The package is now
+  `@strait/sdk-node`; `BridgeClient` / `BridgeClientOptions` / `BridgeError` are
+  now `StraitClient` / `StraitClientOptions` / `StraitError`. Secret keys use the
+  `st_live_` / `st_test_` prefix; the env var in the examples is `STRAIT_API_KEY`.
+  No aliases for the old names are kept.
+
 ## 0.1.0
 
 - Typed, zero-dependency server SDK: `createLink`, `listLinks`, `updateLink`,
