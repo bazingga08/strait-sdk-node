@@ -11,6 +11,12 @@ npm install @strait/sdk-node
 ```
 <!-- /brand:install -->
 
+Not on the npm registry yet. Until it is, install from GitHub (npm builds it on install):
+
+```sh
+npm install github:bazingga08/strait-sdk-node#v0.6.1
+```
+
 ## Use
 
 ```ts

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+- Installable straight from GitHub: `npm install github:bazingga08/strait-sdk-node#v0.6.1`.
+  The build now runs as a `prepare` script (was `prepack`), so npm compiles `dist/`
+  when it installs from a git URL. No code changes.
+
 ## 0.6.0
 
 - `sendEvent({ clickId })`: pass the tap a conversion came from (contract B15); the
