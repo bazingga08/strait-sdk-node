@@ -58,6 +58,28 @@ export class StraitError extends Error {
   }
 }
 
+/** Hosts where plain http is allowed (local development only). */
+const LOOPBACK = new Set(['localhost', '127.0.0.1', '[::1]']);
+
+/**
+ * The API key is sent with every request, so the base URL must be https.
+ * Plain http is accepted only for localhost, 127.0.0.1 and ::1.
+ */
+function checkBaseUrl(baseUrl: string): void {
+  let u: URL;
+  try {
+    u = new URL(baseUrl);
+  } catch {
+    throw new Error(`StraitClient: baseUrl must be an absolute https URL, e.g. https://strait.link (got "${baseUrl}")`);
+  }
+  if (u.protocol === 'https:') return;
+  if (u.protocol === 'http:' && LOOPBACK.has(u.hostname)) return;
+  throw new Error(
+    `StraitClient: baseUrl must use https:// (got ${u.protocol}//${u.host}). Your API key is sent with every ` +
+      'request, so plain http is only allowed for localhost, 127.0.0.1 and ::1.',
+  );
+}
+
 export class StraitClient {
   private readonly apiKey: string;
   private readonly baseUrl: string;
@@ -66,6 +88,7 @@ export class StraitClient {
   constructor(opts: StraitClientOptions) {
     if (!opts.apiKey) throw new Error('StraitClient: apiKey is required');
     if (!opts.baseUrl) throw new Error('StraitClient: baseUrl is required');
+    checkBaseUrl(opts.baseUrl);
     this.apiKey = opts.apiKey;
     this.baseUrl = opts.baseUrl.replace(/\/+$/, '');
     this.doFetch = opts.fetch ?? globalThis.fetch;

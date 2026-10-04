@@ -24,7 +24,7 @@ import { StraitClient } from '@strait/sdk-node';
 
 const strait = new StraitClient({
   apiKey: process.env.STRAIT_API_KEY!,   // st_live_… from the dashboard
-  baseUrl: 'https://strait.link',
+  baseUrl: 'https://strait.link',        // must be https (http only for localhost)
 });
 
 // Create a link

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.2
+
+- `new StraitClient()` now refuses a `baseUrl` that is not `https://`, with a clear
+  error, because the API key is sent with every request. Plain `http://` is still
+  accepted for local development on `localhost`, `127.0.0.1` and `::1`. A `baseUrl`
+  that is not an absolute URL is also refused up front instead of failing on the
+  first request.
+
 ## 0.6.1
 
 - Installable straight from GitHub: `npm install github:bazingga08/strait-sdk-node#v0.6.1`.

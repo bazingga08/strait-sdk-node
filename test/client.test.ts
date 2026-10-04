@@ -20,8 +20,20 @@ const json = (body: unknown, status = 200) =>
 
 describe('StraitClient', () => {
   it('requires apiKey + baseUrl', () => {
-    expect(() => new StraitClient({ apiKey: '', baseUrl: 'x' })).toThrow();
-    expect(() => new StraitClient({ apiKey: 'k', baseUrl: '' })).toThrow();
+    expect(() => new StraitClient({ apiKey: '', baseUrl: 'https://strait.link' })).toThrow(/apiKey is required/);
+    expect(() => new StraitClient({ apiKey: 'k', baseUrl: '' })).toThrow(/baseUrl is required/);
+  });
+
+  it('refuses a non-https baseUrl, except on localhost / 127.0.0.1 / ::1', () => {
+    const make = (baseUrl: string) => () => new StraitClient({ apiKey: 'k', baseUrl });
+    for (const bad of ['http://strait.link', 'http://go.example.com/', 'http://localhost.evil.com', 'http://127.0.0.2:3000', 'ftp://strait.link', 'ws://localhost']) {
+      expect(make(bad), bad).toThrow(/baseUrl must use https:\/\/.*only allowed for localhost, 127\.0\.0\.1 and ::1/);
+    }
+    expect(make('strait.link')).toThrow(/baseUrl must be an absolute https URL/);
+    expect(make('http://user:secret@strait.link')).toThrow(/^(?!.*secret).*$/s); // never echoes credentials
+    for (const ok of ['https://strait.link', 'https://go.example.com/', 'http://localhost:3000', 'http://127.0.0.1:8787/', 'http://[::1]:3000', 'HTTP://LOCALHOST']) {
+      expect(make(ok), ok).not.toThrow();
+    }
   });
 
   it('createLink POSTs with Bearer auth and trims the base slash', async () => {
