@@ -1,6 +1,6 @@
 # @strait/sdk-node
 
-Server SDK for [Strait](../) — create & manage links and send conversion events
+Server SDK for [Strait](https://straitlink.in) — create & manage links and send conversion events
 from your backend. Zero dependencies; uses your tenant API key.
 
 ## Install
@@ -24,7 +24,7 @@ import { StraitClient } from '@strait/sdk-node';
 
 const strait = new StraitClient({
   apiKey: process.env.STRAIT_API_KEY!,   // st_live_… from the dashboard
-  baseUrl: 'https://go.yourbrand.com',
+  baseUrl: 'https://strait.link',
 });
 
 // Create a link

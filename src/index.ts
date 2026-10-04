@@ -6,7 +6,7 @@
 export interface StraitClientOptions {
   /** Your Strait API key (st_live_… / st_test_…). */
   apiKey: string;
-  /** Strait API base, e.g. https://go.yourbrand.com. */
+  /** Strait API base: https://strait.link. */
   baseUrl: string;
   /** Override fetch (tests / custom agents). Defaults to global fetch. */
   fetch?: typeof fetch;
@@ -119,7 +119,7 @@ export class StraitClient {
     await this.request<null>('DELETE', `/v1/links/${encodeURIComponent(slug)}`);
   }
 
-  /** Send a conversion/revenue event (the /v1/event endpoint is unauthenticated). */
+  /** Send a conversion/revenue event (authenticated with your secret key). */
   async sendEvent(input: SendEventInput): Promise<void> {
     // Server-side: authenticated with the secret key, so no publishable key needed.
     await this.request<unknown>('POST', '/v1/event', input, true);
