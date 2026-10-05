@@ -16,6 +16,8 @@ export interface Link {
   id: string;
   tenantId: string;
   slug: string;
+  /** The link to share, e.g. https://<your-handle>.strait.link/launch (the engine adds it to every link it returns). */
+  shortUrl: string;
   longUrl: string;
   isActive: boolean;
   title?: string;
