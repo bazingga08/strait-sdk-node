@@ -1,4 +1,4 @@
-# @strait/sdk-node
+# @straitlink/node
 
 Server SDK for [Strait](https://straitlink.in) — create & manage links and send conversion events
 from your backend. Zero dependencies; uses your tenant API key.
@@ -7,7 +7,7 @@ from your backend. Zero dependencies; uses your tenant API key.
 
 <!-- brand:install -->
 ```sh
-npm install @strait/sdk-node
+npm install @straitlink/node
 ```
 <!-- /brand:install -->
 
@@ -20,7 +20,7 @@ npm install github:bazingga08/strait-sdk-node#v0.6.2
 ## Use
 
 ```ts
-import { StraitClient } from '@strait/sdk-node';
+import { StraitClient } from '@straitlink/node';
 
 const strait = new StraitClient({
   apiKey: process.env.STRAIT_API_KEY!,   // st_live_… from the dashboard

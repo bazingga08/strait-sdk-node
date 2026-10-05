@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- **Package renamed** to `@straitlink/node` (npm scope `@straitlink`; it was `@strait/sdk-node`, never
+  published to npm). Update imports: `from '@straitlink/node'`. The GitHub repo name is unchanged.
+
 ## 0.6.2
 
 - `new StraitClient()` now refuses a `baseUrl` that is not `https://`, with a clear

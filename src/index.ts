@@ -1,5 +1,5 @@
 /**
- * @strait/sdk-node — manage Strait links and send conversion events from your
+ * @straitlink/node — manage Strait links and send conversion events from your
  * backend. Authenticates with a tenant API key (Bearer). Zero dependencies.
  */
 

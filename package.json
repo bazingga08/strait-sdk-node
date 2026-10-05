@@ -1,5 +1,5 @@
 {
-  "name": "@strait/sdk-node",
+  "name": "@straitlink/node",
   "version": "0.6.2",
   "description": "Server SDK for Node: create and manage short links and send conversion events from your backend. Zero dependencies.",
   "keywords": [

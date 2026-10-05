@@ -1,4 +1,4 @@
-# AGENTS.md: Strait Node SDK (@strait/sdk-node)
+# AGENTS.md: Strait Node SDK (@straitlink/node)
 
 Instructions for AI coding agents (Claude Code, Cursor, Codex, Copilot…) that add this SDK to an app or work on
 this repo. Humans: see README.md.
@@ -24,7 +24,7 @@ npm install github:bazingga08/strait-sdk-node#v0.6.2
 This SDK doesn't receive links (apps do that with the mobile SDKs). It creates them:
 
 ```ts
-import { StraitClient } from '@strait/sdk-node';
+import { StraitClient } from '@straitlink/node';
 
 const links = new StraitClient({ apiKey: process.env.STRAIT_SECRET_KEY!, baseUrl: 'https://strait.link' });
 const link = await links.createLink({ slug: 'launch', longUrl: 'https://yourapp.com/launch', tags: ['campaign'] });
@@ -38,7 +38,7 @@ call) rather than a loop.
 ## Verify
 
 ```sh
-STRAIT_SECRET_KEY=st_live_… node -e "import('@strait/sdk-node').then(async ({ StraitClient }) => { const c = new StraitClient({ apiKey: process.env.STRAIT_SECRET_KEY, baseUrl: 'https://strait.link' }); console.log((await c.listLinks()).length, 'links') })"
+STRAIT_SECRET_KEY=st_live_… node -e "import('@straitlink/node').then(async ({ StraitClient }) => { const c = new StraitClient({ apiKey: process.env.STRAIT_SECRET_KEY, baseUrl: 'https://strait.link' }); console.log((await c.listLinks()).length, 'links') })"
 ```
 
 A 401 means a wrong or revoked key (or a publishable key by mistake).
