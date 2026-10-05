@@ -2,8 +2,12 @@
 
 ## Unreleased
 
+## 0.6.3
+
 - **Package renamed** to `@straitlink/node` (npm scope `@straitlink`; it was `@strait/sdk-node`, never
   published to npm). Update imports: `from '@straitlink/node'`. The GitHub repo name is unchanged.
+  The code is otherwise identical to 0.6.2. Tag v0.6.2 (cut before the rename) still carries the old
+  name `@strait/sdk-node` in its package.json, so install v0.6.3 or later for the new import path.
 
 ## 0.6.2
 

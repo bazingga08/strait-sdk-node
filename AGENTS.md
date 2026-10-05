@@ -10,7 +10,7 @@ Server-side: create and manage links and send conversion events from a backend. 
 Not on the npm registry yet: install from GitHub (it builds during install).
 
 ```sh
-npm install github:bazingga08/strait-sdk-node#v0.6.2
+npm install github:bazingga08/strait-sdk-node#v0.6.3
 ```
 
 ## Keys (the rule agents get wrong most)
