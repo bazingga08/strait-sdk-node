@@ -1,6 +1,11 @@
-# @straitlink/node
+# Strait SDK for Node.js (server)
 
-Server SDK for [Strait](https://straitlink.in) — create & manage links and send conversion events
+`@straitlink/node`
+
+> **Availability:** Server SDK: Beta (installed from GitHub; not on npm yet).
+> [Platform status](https://straitlink.in/platform-status/) · [Docs](https://straitlink.in/docs/)
+
+Server SDK for [Strait](https://straitlink.in): create and manage links and send conversion events
 from your backend. Zero dependencies; uses your tenant API key.
 
 ## Install
