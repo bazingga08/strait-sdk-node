@@ -13,6 +13,10 @@ Not on the npm registry yet: install from GitHub (it builds during install).
 npm install github:bazingga08/strait-sdk-node#v0.6.3
 ```
 
+Don't guess a package name. `@straitlink/node` is the name it will publish under, but it isn't on npm yet
+(`npm view @straitlink/node` returns 404). Names like `strait`, `strait-node` or `@strait/node` are not this
+SDK; `strait` on npm belongs to someone else. Use the GitHub line above until this file says otherwise.
+
 ## Keys (the rule agents get wrong most)
 
 - **Publishable key** `st_pub_live_…` (Dashboard → Get started): for apps and websites (the mobile and web SDKs). This SDK doesn't use it.
@@ -28,7 +32,7 @@ import { StraitClient } from '@straitlink/node';
 
 const links = new StraitClient({ apiKey: process.env.STRAIT_SECRET_KEY!, baseUrl: 'https://strait.link' });
 const link = await links.createLink({ slug: 'launch', longUrl: 'https://yourapp.com/launch', tags: ['campaign'] });
-console.log(link.shortUrl);   // https://acme.strait.link/launch: share this
+console.log(link.shortUrl);   // https://hilltop.strait.link/launch: share this (Hilltop Shoes is a made-up shop used in examples)
 await links.sendEvent({ event: 'purchase', value: 499, currency: 'INR', clickId });   // clickId from a webhook, when known
 ```
 
@@ -42,6 +46,41 @@ STRAIT_SECRET_KEY=st_live_… node -e "import('@straitlink/node').then(async ({ 
 ```
 
 A 401 means a wrong or revoked key (or a publishable key by mistake).
+
+### Verify loop (no phone needed)
+
+After creating a link, check what a tap would do and whether the app's domain files are right. Repeat until both
+pass, then hand off to the human for a real-device test.
+
+1. **Dry-run a tap:** `GET https://strait.link/v1/simulate?url=<shortUrl>&ua=<user agent>` with
+   `Authorization: Bearer $STRAIT_SECRET_KEY`. It returns the `decision` (`redirect`, `interstitial`, `escape`,
+   `preview`, `expired`, `not_live`, `blocked`) and where the tap would be sent, without recording a tap, firing
+   webhooks or counting toward the plan. Try an Android and an iPhone user agent.
+2. **Check App Links / Universal Links files:** `GET https://strait.link/v1/tools/app-links?domain=<link domain>`
+   (no key). Fix every finding with `severity: "error"` before shipping.
+
+```sh
+curl -s -H "Authorization: Bearer $STRAIT_SECRET_KEY" \
+  "https://strait.link/v1/simulate?url=https%3A%2F%2Fhilltop.strait.link%2Flaunch&ua=Mozilla%2F5.0%20(Linux%3B%20Android%2014)"
+curl -s "https://strait.link/v1/tools/app-links?domain=hilltop.strait.link"
+```
+
+Both are in the OpenAPI description (https://strait.link/v1/openapi.json). iPhone install matching is in beta, so a
+simulated iPhone result is not proof of a match.
+
+## Stop and ask the human
+
+These need a person. Don't work around them, don't invent values, and don't mark the task done without them:
+
+- **Signing up** and creating the workspace at https://app.straitlink.in (there is no signup API).
+- **The secret key** `st_live_…` (Dashboard → Settings → Secret keys). Ask the human to put it in the server's
+  environment; never ask them to paste it into chat, code or a commit.
+- **Dashboard settings**: the workspace handle, custom link domain, Android package and SHA-256 fingerprints,
+  iOS team ID and bundle ID.
+- **Store and DNS changes**: Play Console or App Store uploads, DNS records for a custom domain.
+- **Anything that costs money** or changes the plan.
+- **A real-device test** on an Android phone and an iPhone before calling the integration finished.
+- **Publishing this package** to npm, or any release tag (the founder does that; see PUBLISHING.md).
 
 ## Working on this repo
 
@@ -58,5 +97,6 @@ A 401 means a wrong or revoked key (or a publishable key by mistake).
 ## More
 
 - Docs for this SDK: https://straitlink.in/docs/sdks/node/
+- Help: support@straitlink.in (replies within 1 working day, IST) or a GitHub issue. Security issues: SECURITY.md.
 - All docs: https://straitlink.in/docs/ · REST API: https://straitlink.in/docs/api/
 - Strait from AI tools (MCP server: create links, check App Links files, trace taps): https://straitlink.in/ai/

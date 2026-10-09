@@ -10,6 +10,9 @@ from your backend. Zero dependencies; uses your tenant API key.
 
 ## Install
 
+The package will publish as `@straitlink/node`. It isn't on npm yet, so the first command below
+doesn't work today. Don't install other names that look similar (`strait` on npm is someone else's package).
+
 <!-- brand:install -->
 ```sh
 npm install @straitlink/node
@@ -63,3 +66,9 @@ Failures throw a `StraitError` with `.status` and the parsed `.body`.
 | `updateLink(slug, fields)` | `PATCH /v1/links/:slug` |
 | `deleteLink(slug)` | `DELETE /v1/links/:slug` |
 | `sendEvent(input)` | `POST /v1/event` |
+
+## Support
+
+Questions or a bug: email support@straitlink.in (replies within 1 working day, IST) or open a
+[GitHub issue](https://github.com/bazingga08/strait-sdk-node/issues).
+Security issues: see [SECURITY.md](SECURITY.md); please don't file them as public issues.
