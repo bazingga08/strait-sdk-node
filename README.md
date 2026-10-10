@@ -5,8 +5,8 @@
 > **Availability:** Server SDK: Beta (installed from GitHub; not on npm yet).
 > [Platform status](https://straitlink.in/platform-status/) · [Docs](https://straitlink.in/docs/)
 
-Server SDK for [Strait](https://straitlink.in): create and manage links and send conversion events
-from your backend. Zero dependencies; uses your tenant API key.
+Server SDK for [Strait](https://straitlink.in) (straight to the screen, on the record): create and manage
+links and send conversion events from your backend. Zero dependencies; uses your tenant API key.
 
 ## Install
 
@@ -69,6 +69,6 @@ Failures throw a `StraitError` with `.status` and the parsed `.body`.
 
 ## Support
 
-Questions or a bug: email support@straitlink.in (replies within 1 working day, IST) or open a
+Questions or a bug? Talk to the Strait team: email support@straitlink.in (replies within 1 working day) or open a
 [GitHub issue](https://github.com/bazingga08/strait-sdk-node/issues).
 Security issues: see [SECURITY.md](SECURITY.md); please don't file them as public issues.

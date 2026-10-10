@@ -75,12 +75,12 @@ These need a person. Don't work around them, don't invent values, and don't mark
 - **Signing up** and creating the workspace at https://app.straitlink.in (there is no signup API).
 - **The secret key** `st_live_…` (Dashboard → Settings → Secret keys). Ask the human to put it in the server's
   environment; never ask them to paste it into chat, code or a commit.
-- **Dashboard settings**: the workspace handle, custom link domain, Android package and SHA-256 fingerprints,
+- **Dashboard settings**: the workspace handle (custom link domains are coming soon), Android package and SHA-256 fingerprints,
   iOS team ID and bundle ID.
-- **Store and DNS changes**: Play Console or App Store uploads, DNS records for a custom domain.
+- **Store and DNS changes**: Play Console or App Store uploads, DNS records for a custom domain (once custom domains ship; they are coming soon).
 - **Anything that costs money** or changes the plan.
 - **A real-device test** on an Android phone and an iPhone before calling the integration finished.
-- **Publishing this package** to npm, or any release tag (the founder does that; see PUBLISHING.md).
+- **Publishing this package** to npm, or any release tag (the Strait team does that; see PUBLISHING.md).
 
 ## Working on this repo
 
@@ -91,12 +91,13 @@ These need a person. Don't work around them, don't invent values, and don't mark
   `shared-spec/scripts/rename-brand.sh` (all SDKs) or `node scripts/brand.mjs --write`.
 - Wire names are part of the contract: query params `strait_click` / `strait_link`, storage keys `strait.*`,
   headers `X-Strait-*`. Don't rename them.
-- Brand: Strait (never "Straight"). Don't write superlatives ("best", "cheapest") or speed / match-rate numbers in
+- Brand: Strait (the company name is never spelt "Straight"). "Straight" and "Stamped" name the two halves of
+  the product (the tap goes straight to the exact screen; every tap is recorded); the tagline is "Straight to the screen. On the record." Don't write superlatives ("best", "cheapest") or speed / match-rate numbers in
   docs or comments. iPhone install matching is in beta.
 
 ## More
 
 - Docs for this SDK: https://straitlink.in/docs/sdks/node/
-- Help: support@straitlink.in (replies within 1 working day, IST) or a GitHub issue. Security issues: SECURITY.md.
+- Help: talk to the Strait team at support@straitlink.in (replies within 1 working day) or a GitHub issue. Security issues: SECURITY.md.
 - All docs: https://straitlink.in/docs/ · REST API: https://straitlink.in/docs/api/
 - Strait from AI tools (MCP server: create links, check App Links files, trace taps): https://straitlink.in/ai/
