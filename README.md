@@ -1,12 +1,47 @@
-# Strait SDK for Node.js (server)
+<!-- Header: the same in every Strait SDK README (design system v5). -->
+<p align="center">
+  <a href="https://straitlink.in">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/strait-lockup-dark.svg">
+      <img src=".github/assets/strait-lockup.svg" alt="Strait" width="160" height="53">
+    </picture>
+  </a>
+</p>
+
+<h1 align="center">Strait SDK for Node.js</h1>
+
+<p align="center"><strong>Straight to the screen. On the record.</strong><br>
+A tap opens the exact screen, and every link open and install is recorded in your Strait dashboard.</p>
+
+<p align="center">
+  <a href="https://github.com/bazingga08/strait-sdk-node/tags"><img alt="Latest version" src="https://img.shields.io/github/v/tag/bazingga08/strait-sdk-node?sort=semver&label=version&style=flat-square&labelColor=0F0D0A&color=423B33"></a>
+  <a href="https://straitlink.in/platform-status/"><img alt="SDK: Beta" src="https://img.shields.io/badge/SDK-beta-423B33?style=flat-square&labelColor=0F0D0A"></a>
+  <a href="https://github.com/bazingga08/strait-sdk-node/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/bazingga08/strait-sdk-node/ci.yml?branch=main&label=CI&style=flat-square&labelColor=0F0D0A&color=423B33"></a>
+  <a href="LICENSE"><img alt="Licence: MIT" src="https://img.shields.io/badge/licence-MIT-423B33?style=flat-square&labelColor=0F0D0A"></a>
+</p>
+
+<p align="center">
+  <a href="https://straitlink.in/docs/sdks/node/">Docs</a> ·
+  <a href="https://straitlink.in/platform-status/">Platform status</a> ·
+  <a href="CHANGELOG.md">Changelog</a> ·
+  <a href="#docs-and-support">Talk to the Strait team</a>
+</p>
 
 `@straitlink/node`
 
-> **Availability:** Server SDK: Beta (installed from GitHub; not on npm yet).
-> [Platform status](https://straitlink.in/platform-status/) · [Docs](https://straitlink.in/docs/)
-
-Server SDK for [Strait](https://straitlink.in) (straight to the screen, on the record): create and manage
+Server SDK for [Strait](https://straitlink.in): create and manage
 links and send conversion events from your backend. Zero dependencies; uses your tenant API key.
+
+## Platform features
+
+| Feature | Status | Notes |
+|---|---|---|
+| Create, list, update and delete links | ◐ Beta | `StraitClient`, with your tenant API key. |
+| Conversion events from your backend (`sendEvent`) | ◐ Beta | Pass the `clickId` from the app to tie an event to its tap. |
+| iPhone install matching | ◐ Beta | Happens in your app (the mobile SDKs), not on the server. Your choice in Dashboard → Settings → iPhone installs: device matching, paste handoff, both or neither, read from Strait at runtime. Device matching is off by default. iPhone matches are labelled Estimated until measured. |
+| Published on npm | – Not yet | Install from GitHub until it is. |
+
+● Live · ◐ Beta · ○ Planned · – Not yet. The same words as the [platform status](https://straitlink.in/platform-status/) page.
 
 ## Install
 
@@ -67,8 +102,9 @@ Failures throw a `StraitError` with `.status` and the parsed `.body`.
 | `deleteLink(slug)` | `DELETE /v1/links/:slug` |
 | `sendEvent(input)` | `POST /v1/event` |
 
-## Support
+## Docs and support
 
-Questions or a bug? Talk to the Strait team: email support@straitlink.in (replies within 1 working day) or open a
-[GitHub issue](https://github.com/bazingga08/strait-sdk-node/issues).
-Security issues: see [SECURITY.md](SECURITY.md); please don't file them as public issues.
+- **Docs:** [straitlink.in/docs/sdks/node/](https://straitlink.in/docs/sdks/node/) · [platform status](https://straitlink.in/platform-status/) · [troubleshooting](https://straitlink.in/docs/troubleshooting/)
+- **Talk to the Strait team:** [support@straitlink.in](mailto:support@straitlink.in) (replies within 1 working day, IST) or call +91 81218 61890.
+- **Bugs and feature requests:** [open an issue](https://github.com/bazingga08/strait-sdk-node/issues) on this repo.
+- **Security:** never in a public issue. Write to security@straitlink.in (see [SECURITY.md](SECURITY.md)).
