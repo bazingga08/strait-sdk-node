@@ -7,15 +7,12 @@ Server-side: create and manage links and send conversion events from a backend. 
 
 ## Install
 
-Not on the npm registry yet: install from GitHub (it builds during install).
-
 ```sh
-npm install github:bazingga08/strait-sdk-node#v0.6.3
+npm install @straitlink/node
 ```
 
-Don't guess a package name. `@straitlink/node` is the name it will publish under, but it isn't on npm yet
-(`npm view @straitlink/node` returns 404). Names like `strait`, `strait-node` or `@strait/node` are not this
-SDK; `strait` on npm belongs to someone else. Use the GitHub line above until this file says otherwise.
+Don't guess a package name. Names like `strait`, `strait-node` or `@strait/node` are not this
+SDK; `strait` on npm belongs to someone else.
 
 ## Keys (the rule agents get wrong most)
 

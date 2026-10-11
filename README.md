@@ -39,26 +39,19 @@ links and send conversion events from your backend. Zero dependencies; uses your
 | Create, list, update and delete links | ◐ Beta | `StraitClient`, with your tenant API key. |
 | Conversion events from your backend (`sendEvent`) | ◐ Beta | Pass the `clickId` from the app to tie an event to its tap. |
 | iPhone install matching | ◐ Beta | Happens in your app (the mobile SDKs), not on the server. Your choice in Dashboard → Settings → iPhone installs: device matching, paste handoff, both or neither, read from Strait at runtime. Device matching is off by default. iPhone matches are labelled Estimated until measured. |
-| Published on npm | – Not yet | Install from GitHub until it is. |
+| Published on npm | ● Live | `npm install @straitlink/node` |
 
 ● Live · ◐ Beta · ○ Planned · – Not yet. The same words as the [platform status](https://straitlink.in/platform-status/) page.
 
 ## Install
 
-The package will publish as `@straitlink/node`. It isn't on npm yet, so the first command below
-doesn't work today. Don't install other names that look similar (`strait` on npm is someone else's package).
+Don't install other names that look similar (`strait` on npm is someone else's package).
 
 <!-- brand:install -->
 ```sh
 npm install @straitlink/node
 ```
 <!-- /brand:install -->
-
-Not on the npm registry yet. Until it is, install from GitHub (npm builds it on install):
-
-```sh
-npm install github:bazingga08/strait-sdk-node#v0.6.3
-```
 
 ## Use
 
