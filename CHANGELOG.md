@@ -1,7 +1,13 @@
 # Changelog
 
-## Unreleased
+## 0.6.4
 
+The first npm release since 0.6.3 (B-SDK-07). Everything below was on main but unpublished.
+
+- `Link` type: new `shortUrl` field, the link to share (e.g. `https://<your-handle>.strait.link/launch`).
+  The engine already returns it on every link; this only adds it to the TypeScript type.
+- Packaging: the tarball holds only `dist/`, README, LICENSE and package.json (CHANGELOG.md is no
+  longer shipped; read it on GitHub), and `prepublishOnly` rebuilds `dist/` before every publish.
 - README: the common Strait SDK header (logo, the promise "Straight to the screen. On the record.",
   badges, links to docs, platform status and the changelog), a platform features table in the
   availability words (Live / Beta / Planned / Not yet) with the iPhone beta truth (the method is
