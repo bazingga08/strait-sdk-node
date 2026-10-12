@@ -1,3 +1,4 @@
+import { inspect } from 'node:util';
 import { describe, expect, it, vi } from 'vitest';
 import { StraitClient, StraitError } from '../src/index.js';
 
@@ -22,6 +23,20 @@ describe('StraitClient', () => {
   it('requires apiKey + baseUrl', () => {
     expect(() => new StraitClient({ apiKey: '', baseUrl: 'https://strait.link' })).toThrow(/apiKey is required/);
     expect(() => new StraitClient({ apiKey: 'k', baseUrl: '' })).toThrow(/baseUrl is required/);
+  });
+
+  it('never shows the secret key in console.log / util.inspect / JSON.stringify / Object.keys', async () => {
+    const key = 'st_live_SECRETkey1234567890abcdef';
+    const fetchMock = vi.fn(async () => json([])) as unknown as typeof fetch;
+    const client = new StraitClient({ apiKey: key, baseUrl: 'https://strait.link', fetch: fetchMock });
+    expect(inspect(client, { showHidden: true, depth: 5 })).not.toContain('SECRETkey');
+    expect(JSON.stringify(client)).not.toContain('SECRETkey');
+    expect(String(Object.values(client))).not.toContain('SECRETkey');
+    expect(Object.keys(client)).not.toContain('apiKey');
+    // The key is still sent on requests.
+    await client.listLinks();
+    const init = (fetchMock as unknown as { mock: { calls: [string, RequestInit][] } }).mock.calls[0]![1];
+    expect((init.headers as Record<string, string>).Authorization).toBe(`Bearer ${key}`);
   });
 
   it('refuses a non-https baseUrl, except on localhost / 127.0.0.1 / ::1', () => {

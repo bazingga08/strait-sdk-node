@@ -83,7 +83,8 @@ function checkBaseUrl(baseUrl: string): void {
 }
 
 export class StraitClient {
-  private readonly apiKey: string;
+  // A true private field (#), so console.log / util.inspect / JSON.stringify never show the key.
+  readonly #apiKey: string;
   private readonly baseUrl: string;
   private readonly doFetch: typeof fetch;
 
@@ -91,7 +92,7 @@ export class StraitClient {
     if (!opts.apiKey) throw new Error('StraitClient: apiKey is required');
     if (!opts.baseUrl) throw new Error('StraitClient: baseUrl is required');
     checkBaseUrl(opts.baseUrl);
-    this.apiKey = opts.apiKey;
+    this.#apiKey = opts.apiKey;
     this.baseUrl = opts.baseUrl.replace(/\/+$/, '');
     this.doFetch = opts.fetch ?? globalThis.fetch;
   }
@@ -103,7 +104,7 @@ export class StraitClient {
     auth = true,
   ): Promise<T> {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (auth) headers.Authorization = `Bearer ${this.apiKey}`;
+    if (auth) headers.Authorization = `Bearer ${this.#apiKey}`;
     const res = await this.doFetch(`${this.baseUrl}${path}`, {
       method,
       headers,

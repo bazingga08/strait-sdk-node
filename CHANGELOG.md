@@ -4,6 +4,8 @@
 
 The first npm release since 0.6.3 (B-SDK-07). Everything below was on main but unpublished.
 
+- Security (TM-07): the secret key is now a true private field, so `console.log(client)`,
+  `util.inspect` and `JSON.stringify` never print it. http is still refused except on localhost.
 - Fix (SDK-22): a reply that is not JSON (say a proxy's HTML 502 page) now throws `StraitError`
   with its `.status` and the raw text as `.body`, instead of a bare `SyntaxError` with no status.
   A 2xx reply that is not JSON throws `StraitError` too ("HTTP 200: response is not JSON").
