@@ -4,6 +4,10 @@
 
 The first npm release since 0.6.3 (B-SDK-07). Everything below was on main but unpublished.
 
+- Fix (SDK-22): a reply that is not JSON (say a proxy's HTML 502 page) now throws `StraitError`
+  with its `.status` and the raw text as `.body`, instead of a bare `SyntaxError` with no status.
+  A 2xx reply that is not JSON throws `StraitError` too ("HTTP 200: response is not JSON").
+
 - `Link` type: new `shortUrl` field, the link to share (e.g. `https://<your-handle>.strait.link/launch`).
   The engine already returns it on every link; this only adds it to the TypeScript type.
 - Packaging: the tarball holds only `dist/`, README, LICENSE and package.json (CHANGELOG.md is no

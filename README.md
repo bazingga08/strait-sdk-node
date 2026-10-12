@@ -83,7 +83,8 @@ await strait.sendEvent({ event: 'purchase', value: 49.99, currency: 'USD' });
 await strait.sendEvent({ event: 'purchase', value: 49.99, currency: 'USD', clickId });
 ```
 
-Failures throw a `StraitError` with `.status` and the parsed `.body`.
+Failures throw a `StraitError` with `.status` and the parsed `.body` (the raw text when the reply
+is not JSON, such as a proxy's HTML 502 page).
 
 ## API
 

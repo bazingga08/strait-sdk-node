@@ -91,4 +91,19 @@ describe('StraitClient', () => {
       message: 'slug already exists',
     });
   });
+
+  it('throws StraitError (not SyntaxError) when an error reply is not JSON, e.g. an HTML 502 page', async () => {
+    const html = '<html><body><h1>502 Bad Gateway</h1></body></html>';
+    const { client } = clientWith(() => ({ ok: false, status: 502, text: async () => html }) as Response);
+    const err = await client.listLinks().catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(StraitError);
+    expect(err).toMatchObject({ status: 502, message: 'HTTP 502', body: html });
+  });
+
+  it('throws StraitError when a 2xx reply is not JSON', async () => {
+    const { client } = clientWith(() => ({ ok: true, status: 200, text: async () => '<html>oops</html>' }) as Response);
+    const err = await client.listLinks().catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(StraitError);
+    expect(err).toMatchObject({ status: 200, message: 'HTTP 200: response is not JSON', body: '<html>oops</html>' });
+  });
 });

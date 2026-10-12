@@ -110,7 +110,15 @@ export class StraitClient {
       body: body === undefined ? undefined : JSON.stringify(body),
     });
     const text = await res.text();
-    const parsed = text ? JSON.parse(text) : null;
+    // A proxy or host error page (an HTML 502) is not JSON: keep the raw text and still throw StraitError.
+    let parsed: unknown = null;
+    let isJson = true;
+    try {
+      parsed = text ? JSON.parse(text) : null;
+    } catch {
+      parsed = text;
+      isJson = false;
+    }
     if (!res.ok) {
       const msg =
         (parsed && typeof parsed === 'object' && 'error' in parsed
@@ -118,6 +126,7 @@ export class StraitClient {
           : `HTTP ${res.status}`);
       throw new StraitError(msg, res.status, parsed);
     }
+    if (!isJson) throw new StraitError(`HTTP ${res.status}: response is not JSON`, res.status, parsed);
     return parsed as T;
   }
 
