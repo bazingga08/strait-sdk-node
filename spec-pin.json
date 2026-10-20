@@ -1,0 +1,5 @@
+{
+  "specCommit": "5d4efc2",
+  "files": {},
+  "note": "no shared vectors apply: the Node server SDK builds no device fields and parses no links (contract: Node unaffected)"
+}
