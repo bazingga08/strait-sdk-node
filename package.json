@@ -15,10 +15,10 @@
   "homepage": "https://straitlink.in",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bazingga08/strait-sdk-node.git"
+    "url": "git+https://github.com/strait-link/strait-sdk-node.git"
   },
   "bugs": {
-    "url": "https://github.com/bazingga08/strait-sdk-node/issues"
+    "url": "https://github.com/strait-link/strait-sdk-node/issues"
   },
   "type": "module",
   "main": "dist/index.js",

@@ -22,7 +22,7 @@ npmjs.com, signed in, avatar menu, **Add Organization**, name: `straitlink`
 ## 1. Publish the first version
 
 ```sh
-git clone https://github.com/bazingga08/strait-sdk-node.git
+git clone https://github.com/strait-link/strait-sdk-node.git
 cd strait-sdk-node
 git checkout main            # or the commit you want to ship
 npm ci
@@ -46,7 +46,7 @@ npmjs.com, package `@straitlink/node`, **Settings**, **Trusted Publisher**,
 
 | Field | Value |
 | --- | --- |
-| Organization or user | `bazingga08` |
+| Organization or user | `strait-link` |
 | Repository | `strait-sdk-node` |
 | Workflow filename | `release.yml` |
 | Environment name | (leave empty) |
@@ -64,4 +64,4 @@ works; stray tokens can no longer publish).
 If the publish step fails with 404 or ENEEDAUTH, the trusted-publisher fields do not
 match: check the repo name, that the file is `release.yml`, and that the
 environment field is empty. `repository.url` in package.json must stay
-`git+https://github.com/bazingga08/strait-sdk-node.git` (provenance checks it).
+`git+https://github.com/strait-link/strait-sdk-node.git` (provenance checks it).
