@@ -69,4 +69,15 @@ describe('verifyWebhook', () => {
   it('throws a clear error when given parsed JSON instead of the raw body', () => {
     expect(() => verifyWebhook(JSON.parse(BODY), { 'x-strait-signature': SIGNATURE }, SECRET)).toThrow(/raw request body/);
   });
+
+  it('throws on a toleranceSeconds that would switch replay protection off', () => {
+    for (const toleranceSeconds of [Number.NaN, Infinity, -1]) {
+      expect(() => verifyWebhook(BODY, { 'x-strait-signature': SIGNATURE }, SECRET, { toleranceSeconds })).toThrow(/toleranceSeconds/);
+    }
+  });
+
+  it('accepts an ArrayBuffer body (fetch request.arrayBuffer())', () => {
+    const buf = new TextEncoder().encode(BODY).buffer;
+    expect(verifyWebhook(buf, { 'x-strait-signature': SIGNATURE }, SECRET)).toBe(true);
+  });
 });
