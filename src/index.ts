@@ -3,6 +3,8 @@
  * backend. Authenticates with a tenant API key (Bearer). Zero dependencies.
  */
 
+import { createHmac, timingSafeEqual } from 'node:crypto';
+
 export interface StraitClientOptions {
   /** Your Strait API key (st_live_… / st_test_…). */
   apiKey: string;
@@ -159,4 +161,52 @@ export class StraitClient {
     // Server-side: authenticated with the secret key, so no publishable key needed.
     await this.request<unknown>('POST', '/v1/event', input, true);
   }
+}
+
+export interface VerifyWebhookOptions {
+  /** How far the signed timestamp may be from your clock, in seconds. Default 300 (5 minutes). */
+  toleranceSeconds?: number;
+}
+
+/**
+ * Check that a webhook delivery really came from Strait. Pass the raw request body (the exact
+ * bytes, before JSON parsing), the request headers and your webhook's signing secret. Returns
+ * false when the `X-Strait-Signature` header is missing or malformed, the timestamp is more than
+ * `toleranceSeconds` from now (a replay), or the HMAC-SHA256 of "<t>.<raw body>" doesn't match.
+ * Reply 401 when it returns false.
+ */
+export function verifyWebhook(
+  rawBody: string | Uint8Array,
+  headers: Headers | Record<string, string | string[] | undefined>,
+  secret: string,
+  opts: VerifyWebhookOptions = {},
+): boolean {
+  // An empty secret would accept anything signed with an empty key: a config error, not a bad request.
+  if (!secret) throw new Error('verifyWebhook: secret is required');
+  if (typeof rawBody !== 'string' && !(rawBody instanceof Uint8Array)) {
+    throw new TypeError('verifyWebhook: pass the raw request body (string or Buffer), not parsed JSON (Express: express.raw())');
+  }
+  const header = signatureHeader(headers);
+  if (!header) return false;
+  const parts = new Map(
+    header.split(',').map((p) => {
+      const i = p.indexOf('=');
+      return [p.slice(0, i).trim(), p.slice(i + 1).trim()] as const;
+    }),
+  );
+  const t = parts.get('t') ?? '';
+  const v1 = parts.get('v1') ?? '';
+  if (!/^\d+$/.test(t) || !v1) return false;
+  if (Math.abs(Date.now() / 1000 - Number(t)) > (opts.toleranceSeconds ?? 300)) return false;
+  const expected = Buffer.from(createHmac('sha256', secret).update(`${t}.`).update(rawBody).digest('hex'));
+  const got = Buffer.from(v1);
+  return expected.length === got.length && timingSafeEqual(expected, got);
+}
+
+/** X-Strait-Signature from a fetch Headers or a Node/Express headers object (any case). */
+function signatureHeader(headers: Headers | Record<string, string | string[] | undefined>): string | undefined {
+  if (typeof (headers as Headers).get === 'function') return (headers as Headers).get('x-strait-signature') ?? undefined;
+  const key = Object.keys(headers).find((k) => k.toLowerCase() === 'x-strait-signature');
+  const value = key === undefined ? undefined : (headers as Record<string, string | string[] | undefined>)[key];
+  return Array.isArray(value) ? value[0] : value;
 }

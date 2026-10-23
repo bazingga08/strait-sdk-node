@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.5
+
+- New: `verifyWebhook(rawBody, headers, secret, { toleranceSeconds })` checks a webhook delivery's
+  `X-Strait-Signature` (`t=<unix seconds>,v1=<hex HMAC-SHA256 of "<t>.<raw body>">`) the way the engine
+  signs it: constant-time compare (`node:crypto` `timingSafeEqual`), timestamp within 300 s by default
+  (either direction), raw body as a string or Buffer, headers as a fetch `Headers` or a Node/Express
+  headers object. Returns false for a bad delivery; throws on an empty secret or a parsed (non-raw) body. Tested against a vector made
+  by the engine's own `signPayload`. Replaces the ~15 lines of HMAC code the webhooks page asked you to paste.
+- Package metadata: repository, homepage and issue links point at `github.com/strait-link/strait-sdk-node`
+  (the repo moved from bazingga08 on 23 Oct 2026; the old URL redirects).
+- Dev only: `@types/node` ^20 for the typecheck (no runtime dependency; the package stays zero-dependency).
+
 ## 0.6.4
 
 The first npm release since 0.6.3 (B-SDK-07). Everything below was on main but unpublished.
