@@ -95,6 +95,24 @@ is not JSON, such as a proxy's HTML 502 page).
 | `updateLink(slug, fields)` | `PATCH /v1/links/:slug` |
 | `deleteLink(slug)` | `DELETE /v1/links/:slug` |
 | `sendEvent(input)` | `POST /v1/event` |
+| `verifyWebhook(rawBody, headers, secret, { toleranceSeconds })` | checks a webhook delivery (no request) |
+
+## Verify a webhook
+
+Pass the raw body (before JSON parsing), the headers and your webhook's signing secret. It checks the
+`X-Strait-Signature` HMAC in constant time and refuses deliveries more than 5 minutes old.
+
+```ts
+import express from 'express';
+import { verifyWebhook } from '@straitlink/node';
+
+const app = express();
+app.post('/webhooks/strait', express.raw({ type: 'application/json' }), (req, res) => {
+  if (!verifyWebhook(req.body, req.headers, process.env.STRAIT_WEBHOOK_SECRET!)) return res.status(401).end();
+  const delivery = JSON.parse(req.body.toString('utf8')); // { id, event, createdAt, data }
+  res.status(204).end();
+});
+```
 
 ## Docs and support
 
