@@ -1,0 +1,12 @@
+{
+  "name": "strait-example-node",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env index.mjs",
+    "build": "tsc --noEmit --allowJs --checkJs --strict --module nodenext --target es2022 --skipLibCheck index.mjs"
+  },
+  "dependencies": {
+    "@straitlink/node": "file:../.."
+  }
+}
