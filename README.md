@@ -138,6 +138,14 @@ app.post('/webhooks/strait', express.raw({ type: 'application/json' }), (req, re
 });
 ```
 
+## Example app
+
+[`examples/node`](examples/node) creates a link, sends a `purchase` event and deletes the link, built against this repo's source (CI builds it on every PR).
+
+1. `npm ci` here, then `cd examples/node && npm ci`.
+2. `cp .env.example .env` and set your secret key (`st_live_…`, a test workspace).
+3. `npm start`
+
 ## Docs and support
 
 - **Docs:** [straitlink.in/docs/sdks/node/](https://straitlink.in/docs/sdks/node/) · [platform status](https://straitlink.in/platform-status/) · [troubleshooting](https://straitlink.in/docs/troubleshooting/)
