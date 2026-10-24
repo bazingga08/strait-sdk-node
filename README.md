@@ -32,6 +32,30 @@ A tap opens the exact screen, and every link open and install is recorded in you
 Server SDK for [Strait](https://straitlink.in): create and manage
 links and send conversion events from your backend. Zero dependencies; uses your tenant API key.
 
+## Quick start (60 seconds)
+
+**1. Install.**
+
+```sh
+npm install @straitlink/node
+```
+
+**2. Make a link from your server.** Save this as `quickstart.mjs`. The secret key (`st_live_…`) is in **Dashboard → Settings → Secret keys**; keep it on servers only.
+
+```ts
+import { StraitClient } from '@straitlink/node';
+
+const strait = new StraitClient({ apiKey: process.env.STRAIT_API_KEY, baseUrl: 'https://strait.link' });
+const link = await strait.createLink({ slug: 'hello', longUrl: 'https://shop.example.com/product/42' });
+console.log(link.shortUrl);
+```
+
+```sh
+STRAIT_API_KEY=st_live_… node quickstart.mjs
+```
+
+**You should see:** `https://<your-handle>.strait.link/hello`, and the same link in **Dashboard → Links**. Run it twice and the second run throws a `StraitError` with status `409`, because the path is taken.
+
 ## Platform features
 
 | Feature | Status | Notes |
