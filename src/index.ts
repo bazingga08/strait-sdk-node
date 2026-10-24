@@ -22,20 +22,89 @@ export interface Link {
   shortUrl: string;
   longUrl: string;
   isActive: boolean;
-  title?: string;
-  tags?: string[];
-  expiresAt?: number;
-}
-
-export interface CreateLinkInput {
-  slug: string;
-  longUrl: string;
-  title?: string;
+  title?: string | null;
+  description?: string;
+  imageUrl?: string;
+  campaign?: string;
   tags?: string[];
   iosFallbackUrl?: string;
   androidFallbackUrl?: string;
   desktopUrl?: string;
+  /** Unix ms. */
+  expiresAt?: number | null;
+  startsAt?: number | null;
+  passwordProtected?: boolean;
+  variants?: Array<{ url: string; weight?: number }>;
+  referralCode?: string;
+  [field: string]: unknown;
 }
+
+/** POST /v1/links body (OpenAPI `NewLink`). */
+export interface CreateLinkInput {
+  slug: string;
+  longUrl: string;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+  campaign?: string;
+  tags?: string[];
+  iosFallbackUrl?: string;
+  androidFallbackUrl?: string;
+  desktopUrl?: string;
+  /** ISO date-time or unix ms. */
+  expiresAt?: string | number;
+  startsAt?: string | number;
+  password?: string;
+  referralCode?: string;
+  [field: string]: unknown;
+}
+
+export interface LinkPage {
+  links: Link[];
+  nextCursor: string | null;
+}
+
+export interface ListLinksOptions {
+  limit?: number;
+  cursor?: string;
+  /** Default active. */
+  status?: 'active' | 'paused';
+}
+
+export interface BatchResult {
+  results: Array<{ index: number; ok: boolean; status?: number; link?: Link; error?: string }>;
+  [field: string]: unknown;
+}
+
+export interface Domain {
+  hostname: string;
+  verified: boolean;
+  status: string;
+  message?: string;
+  records?: Array<Record<string, unknown>>;
+}
+
+export interface WebhookDelivery {
+  id: string;
+  webhookId: string;
+  event: string;
+  status: string;
+  attempts: number;
+  lastStatus: number | null;
+  lastError: string | null;
+  nextAttemptAt: string | null;
+  createdAt: string;
+  deliveredAt: string | null;
+}
+
+/** A binary or text answer (a QR image, an export file). */
+export interface FileResponse {
+  contentType: string;
+  body: Uint8Array;
+}
+
+export type ExportPart = 'links' | 'taps' | 'events' | 'webhooks' | 'worker';
+type Query = Record<string, string | number | boolean | undefined>;
 
 export interface SendEventInput {
   event: string;
@@ -99,15 +168,16 @@ export class StraitClient {
     this.doFetch = opts.fetch ?? globalThis.fetch;
   }
 
-  private async request<T>(
-    method: string,
-    path: string,
-    body?: unknown,
-    auth = true,
-  ): Promise<T> {
+  private url(path: string, query?: Query): string {
+    const u = new URL(`${this.baseUrl}${path}`);
+    for (const [k, v] of Object.entries(query ?? {})) if (v !== undefined) u.searchParams.set(k, String(v));
+    return u.toString();
+  }
+
+  private async request<T>(method: string, path: string, body?: unknown, auth = true, query?: Query): Promise<T> {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (auth) headers.Authorization = `Bearer ${this.#apiKey}`;
-    const res = await this.doFetch(`${this.baseUrl}${path}`, {
+    const res = await this.doFetch(this.url(path, query), {
       method,
       headers,
       body: body === undefined ? undefined : JSON.stringify(body),
@@ -133,33 +203,138 @@ export class StraitClient {
     return parsed as T;
   }
 
+  /** For answers that are files (QR images, exports): the bytes and their content type. */
+  private async file(path: string, query: Query): Promise<FileResponse> {
+    const res = await this.doFetch(this.url(path, query), { method: 'GET', headers: { Authorization: `Bearer ${this.#apiKey}` } });
+    if (!res.ok) {
+      const text = await res.text();
+      let parsed: unknown = text;
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        /* keep the text */
+      }
+      const msg = parsed && typeof parsed === 'object' && 'error' in parsed ? String((parsed as { error: unknown }).error) : `HTTP ${res.status}`;
+      throw new StraitError(msg, res.status, parsed);
+    }
+    return { contentType: res.headers?.get('content-type') ?? '', body: new Uint8Array(await res.arrayBuffer()) };
+  }
+
+  // Method names follow the OpenAPI operationIds (https://strait.link/openapi.json, pinned in openapi.json);
+  // test/openapi-coverage.test.ts fails when a secret-key operation has no method here.
+
   /** Create a short link. */
   createLink(input: CreateLinkInput): Promise<Link> {
     return this.request<Link>('POST', '/v1/links', input);
   }
 
-  /** List the workspace's active links. */
-  listLinks(): Promise<Link[]> {
-    return this.request<Link[]>('GET', '/v1/links');
+  /** Create up to 500 links in one call; each item answers on its own (results[i].ok). */
+  batchCreateLinks(links: CreateLinkInput[]): Promise<BatchResult> {
+    return this.request<BatchResult>('POST', '/v1/links/batch', { links });
   }
 
-  /** Update a link's destination/metadata. */
-  updateLink(
-    slug: string,
-    fields: Partial<Pick<CreateLinkInput, 'longUrl' | 'title' | 'tags'>>,
-  ): Promise<Link> {
+  /** One link by its short path. */
+  getLink(slug: string): Promise<Link> {
+    return this.request<Link>('GET', `/v1/links/${encodeURIComponent(slug)}`);
+  }
+
+  /** The workspace's active links (all of them), or one page with `{ limit, cursor, status }`. */
+  listLinks(): Promise<Link[]>;
+  listLinks(opts: ListLinksOptions): Promise<LinkPage>;
+  listLinks(opts?: ListLinksOptions): Promise<Link[] | LinkPage> {
+    return opts ? this.request<LinkPage>('GET', '/v1/links', undefined, true, { ...opts }) : this.request<Link[]>('GET', '/v1/links');
+  }
+
+  /** Change a link's destination, preview, campaign, tags or schedule. */
+  updateLink(slug: string, fields: Partial<CreateLinkInput>): Promise<Link> {
     return this.request<Link>('PATCH', `/v1/links/${encodeURIComponent(slug)}`, fields);
   }
 
-  /** Deactivate a link. */
-  async deleteLink(slug: string): Promise<void> {
+  /** Pause a link: it stops redirecting; its taps stay and it can be turned back on in the dashboard. */
+  async deactivateLink(slug: string): Promise<void> {
     await this.request<null>('DELETE', `/v1/links/${encodeURIComponent(slug)}`);
   }
 
-  /** Send a conversion/revenue event (authenticated with your secret key). */
+  /** @deprecated Same as deactivateLink (the link is paused, not deleted). */
+  deleteLink(slug: string): Promise<void> {
+    return this.deactivateLink(slug);
+  }
+
+  /** The link's QR code as PNG (default) or SVG. */
+  getLinkQr(
+    slug: string,
+    opts: { format?: 'svg' | 'png'; size?: number; margin?: number; color?: string; background?: string; logo?: string; track?: boolean } = {},
+  ): Promise<FileResponse> {
+    return this.file(`/v1/links/${encodeURIComponent(slug)}/qr`, { ...opts });
+  }
+
+  /** Taps, opens, installs and revenue for a period, optionally for one link and grouped (day, channel, link…). */
+  getAnalytics(q: { from?: string; to?: string; link?: string; group?: string } = {}): Promise<Record<string, unknown>> {
+    return this.request('GET', '/v1/analytics', undefined, true, q);
+  }
+
+  /** This month's taps against the plan. */
+  getUsage(): Promise<Record<string, unknown>> {
+    return this.request('GET', '/v1/usage');
+  }
+
+  /** Taps and installs per referral code. */
+  getReferrals(q: { from?: string; to?: string } = {}): Promise<Record<string, unknown>> {
+    return this.request('GET', '/v1/referrals', undefined, true, q);
+  }
+
+  /** What a tap on `url` would do for a user agent (no tap is recorded). */
+  simulateTap(q: { url: string; ua?: string; country?: string }): Promise<Record<string, unknown>> {
+    return this.request('GET', '/v1/simulate', undefined, true, q);
+  }
+
+  /** Download a part of your data (links, taps, events, webhooks, worker) as a file. */
+  exportData(q: { part: ExportPart; from?: string; to?: string }): Promise<FileResponse> {
+    return this.file('/v1/export', q);
+  }
+
+  /** A short-lived token to download an export without your key (e.g. from a browser). */
+  createExportToken(input: { part: ExportPart; from?: string; to?: string }): Promise<{ token: string; part: string; expiresAt: string; path: string }> {
+    return this.request('POST', '/v1/export/token', input);
+  }
+
+  /** Send a signed test delivery to one of your webhooks. */
+  testWebhook(webhookId: string): Promise<Record<string, unknown>> {
+    return this.request('POST', `/v1/webhooks/${encodeURIComponent(webhookId)}/test`);
+  }
+
+  /** A webhook's recent deliveries, newest first. */
+  listWebhookDeliveries(webhookId: string, opts: { limit?: number; cursor?: string } = {}): Promise<{ deliveries: WebhookDelivery[]; nextCursor: string | null }> {
+    return this.request('GET', `/v1/webhooks/${encodeURIComponent(webhookId)}/deliveries`, undefined, true, opts);
+  }
+
+  /** Send one delivery again. */
+  redeliverWebhookDelivery(deliveryId: string): Promise<Record<string, unknown>> {
+    return this.request('POST', `/v1/webhook-deliveries/${encodeURIComponent(deliveryId)}/redeliver`);
+  }
+
+  /** Your custom link domains and their verification state. */
+  listDomains(): Promise<{ domains: Domain[]; [field: string]: unknown }> {
+    return this.request('GET', '/v1/domains');
+  }
+
+  /** Add a custom link domain; the answer lists the DNS records to create. */
+  addDomain(hostname: string): Promise<Domain> {
+    return this.request('POST', '/v1/domains', { hostname });
+  }
+
+  async removeDomain(hostname: string): Promise<void> {
+    await this.request<null>('DELETE', `/v1/domains/${encodeURIComponent(hostname)}`);
+  }
+
+  /** Record a conversion/revenue event (authenticated with your secret key). */
+  recordEvent(input: SendEventInput): Promise<{ ok: boolean; clickId: string | null; linkId: string | null }> {
+    return this.request('POST', '/v1/event', input);
+  }
+
+  /** Same as recordEvent, without the answer. */
   async sendEvent(input: SendEventInput): Promise<void> {
-    // Server-side: authenticated with the secret key, so no publishable key needed.
-    await this.request<unknown>('POST', '/v1/event', input, true);
+    await this.recordEvent(input);
   }
 }
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.0
+
+- Every secret-key API operation now has a method named after its OpenAPI `operationId`: `batchCreateLinks`,
+  `getLink`, `listLinks({ limit, cursor, status })` (one page), `deactivateLink`, `getLinkQr`, `getAnalytics`,
+  `getUsage`, `getReferrals`, `simulateTap`, `exportData`, `createExportToken`, `testWebhook`,
+  `listWebhookDeliveries`, `redeliverWebhookDelivery`, `listDomains`, `addDomain`, `removeDomain`, `recordEvent`
+  (returns the kept `clickId`/`linkId`). `deleteLink` and `sendEvent` keep working (deleteLink is deprecated: the
+  API pauses a link, it doesn't delete it). `Link` and `CreateLinkInput` gain the spec's optional fields.
+- Drift guard: `openapi.json` is pinned from https://strait.link/openapi.json; `test/openapi-coverage.test.ts`
+  fails when a secret-key operation has no method (or a method hits the wrong verb/path), and the daily
+  "OpenAPI drift" workflow (`scripts/openapi-drift.mjs`) fails when the live API adds or drops one.
+- CI: a newer push cancels the run still going.
+
 ## 0.6.5
 
 - New: `verifyWebhook(rawBody, headers, secret, { toleranceSeconds })` checks a webhook delivery's
