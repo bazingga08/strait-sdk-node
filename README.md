@@ -94,10 +94,11 @@ const link = await strait.createLink({
   tags: ['campaign'],
 });
 
-// List / update / delete
-await strait.listLinks();
+// List / update / pause
+await strait.listLinks();                                   // every active link
+await strait.listLinks({ limit: 100, status: 'paused' });   // one page: { links, nextCursor }
 await strait.updateLink('launch', { longUrl: 'https://yourapp.com/launch-v2' });
-await strait.deleteLink('launch');
+await strait.deactivateLink('launch');                      // paused, not deleted
 
 // Send a conversion / revenue event (ties revenue to the funnel)
 // Authenticated with your secret key — no publishable key needed server-side.
@@ -112,13 +113,30 @@ is not JSON, such as a proxy's HTML 502 page).
 
 ## API
 
+Every secret-key operation of the API has a method named after its OpenAPI `operationId`
+([openapi.json](https://strait.link/openapi.json), pinned in this repo; `test/openapi-coverage.test.ts`
+checks each one's HTTP method and path, and a daily job compares the pin with the live file).
+
 | method | endpoint |
 |--------|----------|
 | `createLink(input)` | `POST /v1/links` |
-| `listLinks()` | `GET /v1/links` |
+| `batchCreateLinks(links)` | `POST /v1/links/batch` (up to 500) |
+| `getLink(slug)` | `GET /v1/links/:slug` |
+| `listLinks()` / `listLinks({ limit, cursor, status })` | `GET /v1/links` |
 | `updateLink(slug, fields)` | `PATCH /v1/links/:slug` |
-| `deleteLink(slug)` | `DELETE /v1/links/:slug` |
-| `sendEvent(input)` | `POST /v1/event` |
+| `deactivateLink(slug)` (`deleteLink` still works) | `DELETE /v1/links/:slug` (pauses it) |
+| `getLinkQr(slug, { format, size, … })` | `GET /v1/links/:slug/qr` → `{ contentType, body }` |
+| `getAnalytics({ from, to, link, group })` | `GET /v1/analytics` |
+| `getUsage()` | `GET /v1/usage` |
+| `getReferrals({ from, to })` | `GET /v1/referrals` |
+| `simulateTap({ url, ua, country })` | `GET /v1/simulate` |
+| `exportData({ part, from, to })` | `GET /v1/export` → `{ contentType, body }` |
+| `createExportToken({ part, from, to })` | `POST /v1/export/token` |
+| `testWebhook(id)` | `POST /v1/webhooks/:id/test` |
+| `listWebhookDeliveries(id, { limit, cursor })` | `GET /v1/webhooks/:id/deliveries` |
+| `redeliverWebhookDelivery(id)` | `POST /v1/webhook-deliveries/:id/redeliver` |
+| `listDomains()` / `addDomain(hostname)` / `removeDomain(hostname)` | `/v1/domains` |
+| `recordEvent(input)` (`sendEvent` returns nothing) | `POST /v1/event` |
 | `verifyWebhook(rawBody, headers, secret, { toleranceSeconds })` | checks a webhook delivery (no request) |
 
 ## Verify a webhook
